@@ -1,0 +1,10 @@
+{
+	"name": "bog_worm",
+	"short_name": "bog_worm",
+	"description": "",
+	"id": "bog_worm",
+	"start_url": ".",
+	"display": "standalone",
+	"background_color": "#000000",
+	"theme_color": "#000000"
+}

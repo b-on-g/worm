@@ -1,0 +1,594 @@
+$mol_theme_auto $mol_plugin
+	light \$mol_theme_light
+	attr * mol_theme <= theme <= dark \$mol_theme_dark
+
+$mol_ghost $mol_view
+	Sub $mol_view
+
+$mol_follower $mol_ghost
+	Anchor $mol_view
+	align /number
+		-.5
+		-.5
+	offset /number
+		0
+		0
+	style *
+		^
+		transform <= transform \
+
+$mol_pop $mol_view
+	showed? false
+	align_vert \
+	align_hor \
+	align \bottom_center
+	prefer \vert
+	auto /
+		<= bubble null
+	sub /
+		<= Anchor null
+	sub_visible /
+		<= Anchor
+		<= Follower $mol_follower
+			offset <= bubble_offset /number
+				0
+				1
+			align <= bubble_align /number
+				0
+				0
+			Anchor <= Anchor
+			Sub <= Bubble $mol_pop_bubble
+				content <= bubble_content /$mol_view_content
+				height_max <= height_max 9999
+
+$mol_pop_bubble $mol_view
+	sub <= content /$mol_view_content
+	style *
+		^
+		maxHeight <= height_max 9999
+	attr *
+		^
+		tabindex 0
+		popover \manual
+
+$mol_scroll $mol_view
+	scroll_top? 0
+	scroll_left? 0
+	attr *
+		^
+		tabindex <= tabindex -1
+	event *
+		^
+		scroll? <=> event_scroll? null
+
+$mol_hotkey $mol_plugin
+	event *
+		^
+		keydown? <=> keydown? null
+	key *
+	mod_ctrl false
+	mod_alt false
+	mod_shift false
+
+$mol_nav $mol_plugin
+	cycle? false
+	-
+	mod_ctrl false
+	mod_shift false
+	mod_alt false
+	-
+	keys_x? /
+	keys_y? /
+	-
+	current_x? null
+	current_y? null
+	-
+	event_up? null
+	event_down? null
+	event_left? null
+	event_right? null
+	event *
+		^
+		keydown? <=> event_key? null
+
+$mol_string $mol_view
+	dom_name \input
+	enabled true
+	minimal_height 40
+	autocomplete false
+	selection? /number
+		0
+		0
+	auto /
+		<= selection_watcher null
+		<= error_report null
+	field *
+		^
+		disabled <= disabled false
+		value <= value_changed? <=> value? \
+		placeholder <= hint_visible <= hint \
+		spellcheck <= spellcheck true
+		autocomplete <= autocomplete_native \
+		selectionEnd <= selection_end 0
+		selectionStart <= selection_start 0
+		inputMode <= keyboard \text
+		enterkeyhint <= enter \go
+	attr *
+		^
+		maxlength <= length_max +Infinity
+		type <= type? \text
+	event *
+		^
+		input? <=> event_change? null
+	plugins /
+		<= Submit $mol_hotkey
+			mod_ctrl <= submit_with_ctrl false
+			key * enter? <=> submit? null
+
+$mol_svg $mol_view
+	dom_name \svg
+	dom_name_space \http://www.w3.org/2000/svg
+	font_size 16
+	font_family \
+	style_size *
+
+$mol_svg_root $mol_svg
+	dom_name \svg
+	attr *
+		^
+		viewBox <= view_box \0 0 100 100
+		preserveAspectRatio <= aspect \xMidYMid
+
+$mol_svg_path $mol_svg
+	dom_name \path
+	attr *
+		^
+		d <= geometry \
+
+
+$mol_icon $mol_svg_root
+	view_box \0 0 24 24
+	minimal_width 16
+	minimal_height 16
+	sub /
+		<= Path $mol_svg_path
+			geometry <= path \
+
+$mol_icon_close $mol_icon path \M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z
+
+$mol_speck $mol_view
+	theme \$mol_theme_accent
+	sub /
+		<= value null
+
+$mol_button $mol_view
+	enabled true
+	click? null
+	event_click? null
+	status? /
+	event *
+		^
+		click? <=> activate? <=> event_activate? null
+		dblclick? <=> clicks? null
+		keydown? <=> key_press? <=> event_key_press? null
+	attr *
+		^
+		disabled <= disabled false
+		role \button
+		tabindex <= tab_index 0
+		title <= hint_safe <= hint \
+	sub /$mol_view_content
+		<= title
+	Speck $mol_speck
+		value <= error \
+
+$mol_button_typed $mol_button
+	minimal_height 40
+	minimal_width 40
+
+$mol_button_minor $mol_button_typed
+
+$mol_list $mol_view
+	render_visible_only true
+	render_over 0.1
+	sub <= rows /$mol_view
+		<= Gap_before $mol_view style * paddingTop <= gap_before 0
+		<= Empty $mol_view
+		<= Gap_after $mol_view style * paddingTop <= gap_after 0
+	item_height_min* 1
+	item_width_min* 1
+	view_window_shift? 0
+	view_window /
+		0
+		0
+
+$mol_paragraph $mol_view
+	line_height 24
+	letter_width 7
+	width_limit +Infinity
+	row_width 0
+	sub / <= title
+
+$mol_dimmer $mol_paragraph
+	haystack \
+	needle \
+	sub <= parts /$mol_view_content
+	Low* $mol_paragraph
+		sub /
+			<= string* \
+	High* $mol_paragraph
+		sub /
+			<= string* \
+
+$mol_search $mol_pop
+	query? \
+	suggests /string
+	plugins /$mol_plugin
+		^
+		<= Hotkey $mol_hotkey
+			key * escape? <=> clear? null
+		<= Nav $mol_nav
+			keys_y <= nav_components /$mol_view
+			current_y? <=> nav_focused? null
+	showed? <=> suggests_showed? false
+	align_hor \right
+	Anchor $mol_view
+		sub <= anchor_content /
+			<= Query $mol_string
+				value? <=> query? \
+				hint <= hint @ \Search...
+				submit? <=> submit? null
+				enabled <= enabled true
+				keyboard <= keyboard \search
+				enter <= enter \search
+				bring => bring
+			<= Clear $mol_button_minor
+				hint @ \Clear
+				enabled <= enabled true
+				click? <=> clear? null
+				sub /
+					<= Clear_icon $mol_icon_close
+	bubble_content /$mol_view_content
+		<= Bubble_pane $mol_scroll
+			sub /
+				<= Menu $mol_list
+					rows <= menu_items /$mol_view
+	Suggest* $mol_button_minor
+		click? <=> suggest_select*? null
+		sub <= suggest_content* /$mol_view_content
+			<= Suggest_label* $mol_dimmer
+				haystack <= suggest_label* \
+				needle <= query? \
+
+$mol_check $mol_button_minor
+	attr *
+		^
+		mol_check_checked <= checked? false
+		aria-checked <= aria_checked \false
+		role <= aria_role \checkbox
+	sub /$mol_view_content
+		<= Icon null
+		<= label /
+			<= Title $mol_view
+				sub /
+					<= title \
+
+$mol_pick $mol_pop
+	event *
+		^
+		keydown? <=> keydown? null
+	Anchor <= Trigger $mol_check
+		minimal_width 40
+		minimal_height 40
+		enabled <= trigger_enabled true
+		checked? <=> showed?
+		clicks? <=> clicks? null
+		sub <= trigger_content /$mol_view_content
+			<= title
+		hint <= hint \
+
+$mol_icon_dots_vertical $mol_icon path \M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z
+
+$mol_select $mol_pick
+	dictionary? *
+	options /string
+	value? \
+	option_label_default \
+	Option_row* $mol_button_minor
+		enabled <= enabled true
+		event_click? <=> event_select*? null
+		sub <= option_content* /
+			<= Option_label* $mol_dimmer
+				haystack <= option_label* \
+				needle <= filter_pattern? \
+	No_options $mol_view
+		sub /
+			<= no_options_message @ \No options
+	plugins /
+		^
+		<= Nav $mol_nav
+			keys_y <= nav_components /$mol_view
+			current_y? <=> option_focused? null
+			cycle? <=> nav_cycle? true
+	hint @ \Pick..
+	bubble_content /
+		<= Filter
+		<= Bubble_pane $mol_scroll
+			sub /
+				<= Menu $mol_list
+					rows <= menu_content /$mol_view
+	Filter $mol_search
+		query? <=> filter_pattern? \
+		hint <= filter_hint @ \Filter..
+		submit? <=> submit? null
+		enabled <= enabled true
+	Trigger_icon $mol_icon_dots_vertical
+	trigger_enabled <= enabled
+
+$mol_link $mol_view
+	uri \
+	dom_name \a
+	uri_off \
+	uri_native null
+	external false
+	attr *
+		^
+		href <= uri_unsafe <= uri_toggle \
+		title <= hint_safe <= hint \
+		target <= target \_self
+		download <= file_name \
+		mol_link_current <= current false
+		rel <= relation \
+	sub /$mol_view_content
+		<= title
+	arg *
+	event *
+		^
+		click? <=> click? <=> event_click? null
+
+$mol_check_list $mol_view
+	dictionary *
+	Option* $mol_check
+		checked? <=> option_checked*? false
+		label <= option_label* /
+			<= option_title* \
+		enabled <= option_enabled* <= enabled true
+		hint <= option_hint* \
+		minimal_height 24
+	options *
+	keys /string
+	sub <= items /$mol_check
+
+$bog_worm_slider $mol_view
+	dom_name \input
+	value? 1
+	least 1
+	most 100
+	minimal_height 24
+	attr *
+		^
+		type \range
+		min <= least 1
+		max <= most 100
+		step <= step 1
+		aria-label <= hint \
+	field *
+		^
+		value <= value_text \
+	event *
+		^
+		input? <=> event_change? null
+
+$bog_worm_panel $mol_view
+	type_on*? true
+	kind_on*? true
+	weight_min? 1
+	weight_most 30
+	path_from? \
+	path_to? \
+	sub /
+		<= Cells $mol_view
+			sub /
+				<= Cells_title $mol_view
+					sub / <= cells_title \Cell types
+				<= Types $mol_check_list
+					options *
+						sensory \Sensory
+						poly \Polymodal
+						inter \Interneuron
+						motor \Motor
+						muscle \Muscle
+						other \Other
+					option_checked*? <=> type_on*? true
+		<= Links $mol_view
+			sub /
+				<= Links_title $mol_view
+					sub / <= links_title \Connections
+				<= Kinds $mol_check_list
+					options *
+						chemical \Chemical synapses
+						gap \Gap junctions
+					option_checked*? <=> kind_on*? true
+		<= Weight $mol_view
+			sub /
+				<= Weight_title $mol_view
+					sub / <= weight_title \
+				<= Weight_slider $bog_worm_slider
+					hint \Minimal connection weight
+					least 1
+					most <= weight_most 30
+					value? <=> weight_min? 1
+		<= Path $mol_view
+			sub /
+				<= Path_title $mol_view
+					sub / <= path_title \Signal path
+				<= Path_from $mol_search
+					hint \From, e.g. ASH
+					query? <=> path_from? \
+					suggests <= path_from_suggests /string
+				<= Path_to $mol_search
+					hint \To, e.g. AVA
+					query? <=> path_to? \
+					suggests <= path_to_suggests /string
+				<= Path_note $mol_view
+					sub / <= path_note \Up to three shortest chains of chemical synapses, five hops at most.
+		<= Legend $mol_view
+			sub <= legend /
+	Legend_row* $mol_view
+		sub /
+			<= Legend_dot* $mol_view
+				attr *
+					^
+					worm_type <= legend_type* \
+			<= legend_label* \
+
+$mol_canvas $mol_view
+	dom_name \canvas
+	context CanvasRenderingContext2D
+	field *
+		^
+		width <= width 0
+		height <= height 0
+	paint null
+
+$bog_worm_plot $mol_canvas
+	layout_name \layered
+	types *
+	kinds *
+	weight_min 1
+	focus? \
+	path_from \
+	path_to \
+	hover? \
+	picked? -1
+	tip \
+	tip_x? 0
+	tip_y? 0
+	reset? null
+	attr *
+		^
+		tabindex 0
+		worm_grabbing <= grabbing false
+	event *
+		^
+		pointerdown? <=> event_down? null
+		pointermove? <=> event_move? null
+		pointerup? <=> event_up? null
+		pointercancel? <=> event_off? null
+		pointerleave? <=> event_leave? null
+		wheel? <=> event_wheel? null
+
+$bog_worm_detail $mol_view
+	focus? \
+	sub /
+		<= Head $mol_view
+			sub /
+				<= Name $mol_view
+					sub / <= name \
+				<= Facts $mol_view
+					sub / <= facts \
+				<= Close $mol_button_minor
+					hint \Clear selection
+					click? <=> close? null
+					sub / <= close_label \Clear
+		<= List $mol_list
+			rows <= rows /
+	Section* $mol_view
+		sub / <= section_title* \
+	Row* $mol_button_minor
+		click? <=> row_click*? null
+		sub /
+			<= Row_peer* $mol_view
+				sub / <= row_peer* \
+			<= Row_note* $mol_view
+				sub / <= row_note* \
+			<= Row_weight* $mol_view
+				sub / <= row_weight* \
+
+$bog_worm $mol_view
+	dom_name \main
+	title \C. elegans connectome
+	hint \Interactive map of all 302 neurons of Caenorhabditis elegans and their synapses
+	attr *
+		^
+		worm_panel <= panel_state \on
+		worm_layout <= layout_kind \wide
+	plugins /
+		<= Theme $mol_theme_auto
+	auto /
+		<= keyboard null
+	sub /
+		<= Head $mol_view
+			dom_name \header
+			sub /
+				<= Brand $mol_view
+					sub /
+						<= brand \C. elegans connectome
+						<= Count $mol_view
+							sub / <= count \
+				<= Search $mol_search
+					hint \Find ASH, AVAL, dBWML8…
+					query? <=> query? \
+					suggests <= suggests /string
+				<= Layout $mol_select
+					hint \Layout
+					value? <=> layout_name? \layered
+					dictionary *
+						layered \Layered
+						force \Force-directed
+				<= Reset $mol_button_minor
+					hint \Fit the whole connectome back into view
+					click? <=> reset? null
+					sub / <= reset_label \Reset view
+				<= Panel_toggle $mol_check
+					title \Filters
+					hint \Show or hide the filter panel
+					checked? <=> panel_showed? true
+		<= Stage $mol_view
+			sub <= stage /
+		<= Foot $mol_view
+			dom_name \footer
+			sub /
+				<= foot_lead \Connectome:
+				<= Cook $mol_link
+					uri \https://doi.org/10.1038/s41586-019-1352-7
+					external true
+					title \Cook et al. 2019
+				<= foot_atlas \ · cell classes and ganglia:
+				<= Atlas $mol_link
+					uri \https://www.wormatlas.org/
+					external true
+					title \WormAtlas
+				<= foot_openworm \ · data packaging:
+				<= Openworm $mol_link
+					uri \https://github.com/openworm
+					external true
+					title \OpenWorm
+				<= foot_source \ · MIT licence,
+				<= Repo $mol_link
+					uri \https://github.com/b-on-g/worm
+					external true
+					title \source and converter
+	Aside $bog_worm_panel
+		type_on*? <=> type_on*? true
+		kind_on*? <=> kind_on*? true
+		weight_min? <=> weight_min? 1
+		path_from? <=> path_from? \
+		path_to? <=> path_to? \
+	Board $mol_view
+		sub <= board /
+	Canvas $bog_worm_plot
+		layout_name <= layout_name? \layered
+		types <= types *
+		kinds <= kinds *
+		weight_min <= weight_min? 1
+		focus? <=> focus? \
+		path_from <= path_from? \
+		path_to <= path_to? \
+	Tip $mol_view
+		style *
+			left <= tip_left \0px
+			top <= tip_top \0px
+		sub / <= tip_text \
+	Links $bog_worm_detail
+		focus? <=> focus? \
