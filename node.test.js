@@ -7303,7 +7303,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\tmin-height: 1.5rem;\n\t/* will-change: contents; */\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n");
+    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\t/* will-change: contents; */\n}\n\n[mol_list]:where([mol_view_error]) {\n\tmin-height: 1.5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -11191,7 +11191,9 @@ var $;
                     }
                     else {
                         cells[edge.from].gap.push(edge);
-                        cells[edge.to].gap.push(edge);
+                        // a dozen gap junctions in the source join two processes of one cell — count them once
+                        if (edge.to !== edge.from)
+                            cells[edge.to].gap.push(edge);
                     }
                 }
             };
@@ -15066,6 +15068,12 @@ var $;
             $mol_assert_ok(chemical > 4000 && chemical < 6000);
             $mol_assert_ok(gap > 1000 && gap < 2500);
             $mol_assert_ok(edges.every(edge => edge.weight > 0));
+        },
+        'a gap junction inside one cell is counted once'() {
+            const askr = $bog_worm_graph.cell('ASKR');
+            const self = askr.gap.filter(edge => edge.from === edge.to);
+            $mol_assert_equal(self.length, 1);
+            $mol_assert_equal(askr.gap.filter(edge => edge === self[0]).length, 1);
         },
         'a neuron knows its class, ganglion and transmitters'() {
             const ash = $bog_worm_graph.cell('ASHL');

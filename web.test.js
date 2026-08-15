@@ -3378,6 +3378,12 @@ var $;
             $mol_assert_ok(gap > 1000 && gap < 2500);
             $mol_assert_ok(edges.every(edge => edge.weight > 0));
         },
+        'a gap junction inside one cell is counted once'() {
+            const askr = $bog_worm_graph.cell('ASKR');
+            const self = askr.gap.filter(edge => edge.from === edge.to);
+            $mol_assert_equal(self.length, 1);
+            $mol_assert_equal(askr.gap.filter(edge => edge === self[0]).length, 1);
+        },
         'a neuron knows its class, ganglion and transmitters'() {
             const ash = $bog_worm_graph.cell('ASHL');
             $mol_assert_equal(ash.cls, 'ASH');
