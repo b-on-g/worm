@@ -1,0 +1,87 @@
+$bog_worm $mol_view
+	dom_name \main
+	title \C. elegans connectome
+	hint \Interactive map of all 302 neurons of Caenorhabditis elegans and their synapses
+	attr *
+		^
+		worm_panel <= panel_state \on
+		worm_layout <= layout_kind \wide
+	plugins /
+		<= Theme $mol_theme_auto
+	auto /
+		<= keyboard null
+	sub /
+		<= Head $mol_view
+			dom_name \header
+			sub /
+				<= Brand $mol_view
+					sub /
+						<= brand \C. elegans connectome
+						<= Count $mol_view
+							sub / <= count \
+				<= Search $mol_search
+					hint \Find ASH, AVAL, dBWML8…
+					query? <=> query? \
+					suggests <= suggests /string
+				<= Layout $mol_select
+					hint \Layout
+					value? <=> layout_name? \layered
+					dictionary *
+						layered \Layered
+						force \Force-directed
+				<= Reset $mol_button_minor
+					hint \Fit the whole connectome back into view
+					click? <=> reset? null
+					sub / <= reset_label \Reset view
+				<= Panel_toggle $mol_check
+					title \Filters
+					hint \Show or hide the filter panel
+					checked? <=> panel_showed? true
+		<= Stage $mol_view
+			sub <= stage /
+		<= Foot $mol_view
+			dom_name \footer
+			sub /
+				<= foot_lead \Connectome:
+				<= Cook $mol_link
+					uri \https://doi.org/10.1038/s41586-019-1352-7
+					external true
+					title \Cook et al. 2019
+				<= foot_atlas \ · cell classes and ganglia:
+				<= Atlas $mol_link
+					uri \https://www.wormatlas.org/
+					external true
+					title \WormAtlas
+				<= foot_openworm \ · data packaging:
+				<= Openworm $mol_link
+					uri \https://github.com/openworm
+					external true
+					title \OpenWorm
+				<= foot_source \ · MIT licence,
+				<= Repo $mol_link
+					uri \https://github.com/b-on-g/worm
+					external true
+					title \source and converter
+	Aside $bog_worm_panel
+		type_on*? <=> type_on*? true
+		kind_on*? <=> kind_on*? true
+		weight_min? <=> weight_min? 1
+		path_from? <=> path_from? \
+		path_to? <=> path_to? \
+	Board $mol_view
+		sub <= board /
+	Canvas $bog_worm_plot
+		layout_name <= layout_name? \layered
+		types <= types *
+		kinds <= kinds *
+		weight_min <= weight_min? 1
+		focus? <=> focus? \
+		path_from <= path_from? \
+		path_to <= path_to? \
+	Tip $mol_view
+		style *
+			left <= tip_left \0px
+			top <= tip_top \0px
+		sub / <= tip_text \
+	Links $bog_worm_detail
+		focus? <=> focus? \

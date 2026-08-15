@@ -1,0 +1,62 @@
+$bog_worm_panel $mol_view
+	type_on*? true
+	kind_on*? true
+	weight_min? 1
+	weight_most 30
+	path_from? \
+	path_to? \
+	sub /
+		<= Cells $mol_view
+			sub /
+				<= Cells_title $mol_view
+					sub / <= cells_title \Cell types
+				<= Types $mol_check_list
+					options *
+						sensory \Sensory
+						poly \Polymodal
+						inter \Interneuron
+						motor \Motor
+						muscle \Muscle
+						other \Other
+					option_checked*? <=> type_on*? true
+		<= Links $mol_view
+			sub /
+				<= Links_title $mol_view
+					sub / <= links_title \Connections
+				<= Kinds $mol_check_list
+					options *
+						chemical \Chemical synapses
+						gap \Gap junctions
+					option_checked*? <=> kind_on*? true
+		<= Weight $mol_view
+			sub /
+				<= Weight_title $mol_view
+					sub / <= weight_title \
+				<= Weight_slider $bog_worm_slider
+					hint \Minimal connection weight
+					least 1
+					most <= weight_most 30
+					value? <=> weight_min? 1
+		<= Path $mol_view
+			sub /
+				<= Path_title $mol_view
+					sub / <= path_title \Signal path
+				<= Path_from $mol_search
+					hint \From, e.g. ASH
+					query? <=> path_from? \
+					suggests <= path_from_suggests /string
+				<= Path_to $mol_search
+					hint \To, e.g. AVA
+					query? <=> path_to? \
+					suggests <= path_to_suggests /string
+				<= Path_note $mol_view
+					sub / <= path_note \Up to three shortest chains of chemical synapses, five hops at most.
+		<= Legend $mol_view
+			sub <= legend /
+	Legend_row* $mol_view
+		sub /
+			<= Legend_dot* $mol_view
+				attr *
+					^
+					worm_type <= legend_type* \
+			<= legend_label* \

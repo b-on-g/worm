@@ -1,0 +1,26 @@
+$bog_worm_detail $mol_view
+	focus? \
+	sub /
+		<= Head $mol_view
+			sub /
+				<= Name $mol_view
+					sub / <= name \
+				<= Facts $mol_view
+					sub / <= facts \
+				<= Close $mol_button_minor
+					hint \Clear selection
+					click? <=> close? null
+					sub / <= close_label \Clear
+		<= List $mol_list
+			rows <= rows /
+	Section* $mol_view
+		sub / <= section_title* \
+	Row* $mol_button_minor
+		click? <=> row_click*? null
+		sub /
+			<= Row_peer* $mol_view
+				sub / <= row_peer* \
+			<= Row_note* $mol_view
+				sub / <= row_note* \
+			<= Row_weight* $mol_view
+				sub / <= row_weight* \

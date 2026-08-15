@@ -1,0 +1,26 @@
+$bog_worm_plot $mol_canvas
+	layout_name \layered
+	types *
+	kinds *
+	weight_min 1
+	focus? \
+	path_from \
+	path_to \
+	hover? \
+	picked? -1
+	tip \
+	tip_x? 0
+	tip_y? 0
+	reset? null
+	attr *
+		^
+		tabindex 0
+		worm_grabbing <= grabbing false
+	event *
+		^
+		pointerdown? <=> event_down? null
+		pointermove? <=> event_move? null
+		pointerup? <=> event_up? null
+		pointercancel? <=> event_off? null
+		pointerleave? <=> event_leave? null
+		wheel? <=> event_wheel? null

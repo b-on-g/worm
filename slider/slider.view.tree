@@ -1,0 +1,19 @@
+$bog_worm_slider $mol_view
+	dom_name \input
+	value? 1
+	least 1
+	most 100
+	minimal_height 24
+	attr *
+		^
+		type \range
+		min <= least 1
+		max <= most 100
+		step <= step 1
+		aria-label <= hint \
+	field *
+		^
+		value <= value_text \
+	event *
+		^
+		input? <=> event_change? null
