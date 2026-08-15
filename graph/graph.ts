@@ -110,7 +110,8 @@ namespace $ {
 						cells[ edge.to ].inp.push( edge )
 					} else {
 						cells[ edge.from ].gap.push( edge )
-						cells[ edge.to ].gap.push( edge )
+						// a dozen gap junctions in the source join two processes of one cell — count them once
+						if( edge.to !== edge.from ) cells[ edge.to ].gap.push( edge )
 					}
 				}
 			}

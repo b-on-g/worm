@@ -40,7 +40,11 @@ Primary citation for the connectome itself:
 - **Ganglia.** Three neurons (`DB7`, `RMHR`, `VA11`) are missing from the ganglion table; each takes
   the majority ganglion of its own class rather than a hand-written assignment.
 - **Gap junctions** are listed from both sides in the source and are collapsed into one undirected
-  edge; chemical synapses stay directed.
+  edge; chemical synapses stay directed and have no duplicate rows to merge. Twenty electrical
+  entries appear from one side only, fourteen of those join two processes of the same cell
+  (`M4`, `M5`, `ASKR`, `PVM`, `AIAR` and so on) and are kept as such. Thirteen pairs disagree on the
+  contact count between the two directions, by one or two contacts each except `PVPL`–`hyp`
+  (47 against 41); the larger number wins.
 - **Non-neuronal cells** — body wall, pharyngeal, uterine and vulval muscles, marginal cells, the
   intestine and the hypodermis — are kept, typed `muscle` or `other`, and can be filtered out.
 

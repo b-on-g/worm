@@ -25,6 +25,16 @@ namespace $ {
 
 		},
 
+		'a gap junction inside one cell is counted once'() {
+
+			const askr = $bog_worm_graph.cell( 'ASKR' )!
+			const self = askr.gap.filter( edge => edge.from === edge.to )
+
+			$mol_assert_equal( self.length, 1 )
+			$mol_assert_equal( askr.gap.filter( edge => edge === self[ 0 ] ).length, 1 )
+
+		},
+
 		'a neuron knows its class, ganglion and transmitters'() {
 
 			const ash = $bog_worm_graph.cell( 'ASHL' )!
